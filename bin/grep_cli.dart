@@ -1,5 +1,5 @@
-import 'package:grep_library/grep_cli.dart' as grep_library;
+import 'package:grep_library/src/cli_foundation/cli_app_launcher.dart';
 
 void main(List<String> arguments) {
-  print('Hello world: ${grep_library.calculate()}!');
+  launchCliApp(arguments);
 }
