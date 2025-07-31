@@ -1,1 +1,1 @@
-export 'package:grep_library/src/cli_foundation/cli_options_parser.dart';
+export 'package:grep_library/src/cli_foundation/cli_app_launcher.dart';
