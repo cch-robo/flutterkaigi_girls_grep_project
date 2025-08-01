@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:grep_library/src/api_foundation/abstract_exception.dart';
@@ -6,39 +7,40 @@ import 'package:grep_library/src/cli_foundation/cli_options_parameter.dart';
 import 'package:grep_library/src/cli_foundation/cli_options_parser.dart';
 import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 
-void launchCliApp(List<String> arguments) {
+import '../../grep_api.dart';
+
+Future<void> launchCliApp(List<String> arguments) async {
   CliOptionParser parser = CliOptionParser(arguments: arguments);
+  CliMessage err = CliMessage(isDebug: parser.isDebug);
   if (arguments.isEmpty || parser.hasOptionsUsage) {
     // ヘルプ表示が必要な場合は、優先的に表示して処理を終了する。
-    CliMessage help = CliMessage(isUseColor: true);
-    help.putMessage(parser.optionsUsage);
+    err.putErrorMessage(parser.optionsUsage);
     exit(1);
   }
 
-  CliMessage errorMessage = CliMessage();
   try {
+    // コマンドライン・オプションパラメータを取得する。
     CliParameter param = createOptionsParameter(parser.argResults);
 
-    // TODO パラメータを使った処理を追加する。（現状は、コマンドライン・パラメータ取得確認のみ）
-    CliMessage mes = CliMessage(isUseColor: true);
-    mes.putMessage('ファイルパス=${param.paths.first.path}', color: TextColor.red);
-    mes.putMessage(
-      'regexps=${param.regexps.map((RegExp regexp) => regexp.pattern)}',
-      color: TextColor.green,
-    );
-    mes.putMessage('isUseColor=${param.isUseColor}', color: TextColor.blue);
-    mes.putMessage('isRecursive=${param.isRecursive}', color: TextColor.yellow);
-    print(mes.getMessage() ?? '');
+    // ターミナルの標準出力に、受け取った検索結果を出力する SteamController を作成する。
+    CliMessage std = CliMessage(isUseColor: param.isUseColor);
+    StreamController<String> streamDataController = StreamController<String>();
+    streamDataController.stream.listen((String data) {
+      std.putMessage(data);
+    });
+
+    // grep 検索を行わせて、StreamController にヒット行を投入させます。
+    await grep(param, streamDataController);
 
     exit(0);
   } on AbstractException catch (exception) {
-    errorMessage.putErrorMessage(exception.message ?? exception.toString());
-    errorMessage.putMessage(exception.stackTrace.toString());
+    err.putErrorMessage(exception.message ?? exception.toString());
+    err.putDebugErrorMessage(exception.stackTrace.toString());
     exit(1);
   } catch (e) {
-    errorMessage.putErrorMessage(e.toString());
+    err.putErrorMessage(e.toString());
     if (e is Error) {
-      print(e.stackTrace);
+      err.putDebugErrorMessage(e.stackTrace.toString());
     }
     exit(1);
   }
