@@ -1,17 +1,24 @@
 import 'dart:io';
 
+import 'package:args/args.dart';
 import 'package:grep_library/src/api_foundation/abstract_exception.dart';
 import 'package:grep_library/src/cli_foundation/cli_message.dart';
 import 'package:grep_library/src/cli_foundation/cli_options_parser.dart';
 import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 
 void launchCliApp(List<String> arguments) {
-  if (arguments.isEmpty) {
-    // オプション指定がないので、コマンドライン・オプション一覧 ⇒ ヘルプ表示を行います。
+  // TODO パラメータ・チェックが終われば削除すること。
+  ArgResults argResults = getOptionsParserResults(arguments, getOptionsParser());
+  argResults.options.forEach((String key) => print('options key=$key'));
+  print('help=${argResults['help']}');
+  print('regexp=${argResults['regexp']}');
+  print('rest=${argResults.rest}');
+
+  bool hasUsage = hasOptionsUsage(getOptionsParserResults(arguments, getOptionsParser()));
+  if (hasUsage) {
     CliMessage help = CliMessage(isUseColor: true);
-    help.putMessage('Usage: dart run grep_cli.dart [options] <file path>\n');
-    help.putMessage(getOptionsUsage());
-    exit(1);
+    help.putMessage(getOptionsUsage(getOptionsParser()));
+    exit(0);
   }
 
   CliMessage errorMessage = CliMessage();
