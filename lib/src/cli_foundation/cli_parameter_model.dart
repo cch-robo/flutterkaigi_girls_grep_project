@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:grep_library/src/api_foundation/union_path_model.dart';
 
 /// grep CLI のコマンドライン・パラメータを表すモデル
 class CliParameter {
@@ -14,10 +14,10 @@ class CliParameter {
   /// _パターンマッチに使う、正規表現パターン・リストを指定します。_
   final List<RegExp> regexps;
 
-  /// パターンマッチ検索対象・ファイルパス一覧
+  /// パターンマッチ検索対象・ファイル/ディレクトリ・ユニオンパス一覧
   ///
   /// _[isRecursive] が true であれば、ディレクトリもファイルパスとして許容されます。_
-  final List<File> paths;
+  final List<UnionPath> paths;
 
   /// ディレクトリ再帰探索フラグ
   ///
