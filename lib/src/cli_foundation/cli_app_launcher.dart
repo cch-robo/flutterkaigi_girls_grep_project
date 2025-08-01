@@ -7,18 +7,12 @@ import 'package:grep_library/src/cli_foundation/cli_options_parser.dart';
 import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 
 void launchCliApp(List<String> arguments) {
-  // TODO パラメータ・チェックが終われば削除すること。
   CliOptionParser parser = CliOptionParser(arguments: arguments);
-  parser.argResults.options.forEach((String key) => print('options key=$key'));
-  print('help=${parser.argResults['help']}');
-  print('regexp=${parser.argResults['regexp']}');
-  print('rest=${parser.argResults.rest}');
-
-  bool hasUsage = parser.hasOptionsUsage;
-  if (hasUsage) {
+  if (parser.hasOptionsUsage) {
+    // ヘルプ表示が要求されている場合は、優先的に表示して処理を終了する。
     CliMessage help = CliMessage(isUseColor: true);
     help.putMessage(parser.optionsUsage);
-    exit(0);
+    exit(1);
   }
 
   CliMessage errorMessage = CliMessage();
@@ -39,9 +33,13 @@ void launchCliApp(List<String> arguments) {
     exit(0);
   } on AbstractException catch (exception) {
     errorMessage.putErrorMessage(exception.message ?? exception.toString());
+    errorMessage.putMessage(exception.stackTrace.toString());
     exit(1);
   } catch (e) {
     errorMessage.putErrorMessage(e.toString());
+    if (e is Error) {
+      print(e.stackTrace);
+    }
     exit(1);
   }
 }
