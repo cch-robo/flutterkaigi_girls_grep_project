@@ -4,4 +4,4 @@
 # dart コマンドが利用可能なターミナル環境で、
 # 以下のようにこのシェルスクリプトにパスを通してください。
 # export PATH=<プロジェクトディレクトリ>/bin:$PATH
-dart run `dirname $0`/grep_cli.dart $1 $2 $3 $4 $5 $6 $7 $8 $9
+dart run `dirname $0`/grep_cli.dart "$@"
