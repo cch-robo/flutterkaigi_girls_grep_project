@@ -93,4 +93,7 @@ PATTERNS can contain multiple patterns separated by newlines.
 
   /// オプション・Usage ヘルプのヘッダ＋オプション一覧取得
   String get optionsUsage => '$usage\n${argParser.usage}';
+
+  /// デバッグモード実行中フラグ
+  bool get isDebug => argResults[debug] as bool;
 }
