@@ -3,7 +3,7 @@ import 'dart:io';
 
 /// コマンドラインアプリの標準入出力クラス
 class CliMessage {
-  CliMessage({this.isUseColor = false});
+  CliMessage({this.isUseColor = false, this.isDebug = false});
 
   /// 文字色を使うか否かのフラグ
   ///
@@ -12,6 +12,9 @@ class CliMessage {
   /// - false: 文字色を使わない<br/>
   ///   エスケープコードを使いません。
   final bool isUseColor;
+
+  /// デバッグモード・フラグ
+  final bool isDebug;
 
   /// メッセージ入力
   ///
@@ -80,6 +83,17 @@ class CliMessage {
   /// - [message] : 表示するメッセージ
   void putErrorMessage(String message) {
     stderr.writeln(message);
+  }
+
+  /// デバッグ・エラーメッセージ出力
+  ///
+  /// デバッグモードであれば、標準エラー出力にメッセージを出力します。
+  ///
+  /// - [message] : 表示するメッセージ
+  void putDebugErrorMessage(String message) {
+    if (isDebug) {
+      stderr.writeln(message);
+    }
   }
 }
 
