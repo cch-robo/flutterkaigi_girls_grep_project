@@ -6,6 +6,7 @@ class CliParameter {
     required this.regexps,
     required this.paths,
     this.isRecursive = false,
+    this.isDescribe = false,
     this.isUseColor = false,
   });
 
@@ -27,6 +28,13 @@ class CliParameter {
   ///
   /// _通常の grep では、`-r`, `--recursive`, `-R`, `--directory-recursive` が選べます。_
   final bool isRecursive;
+
+  /// 出力テキスト行・説明追加フラグ
+  ///
+  /// オプション -d か --describe の指定を表します。
+  ///
+  /// true であれば、出力テキスト行にデータソース元と行番号の説明を追加します。
+  final bool isDescribe;
 
   /// 出力テキスト行・パターンマッチ部色付フラグ
   ///

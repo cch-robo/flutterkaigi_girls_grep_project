@@ -12,6 +12,9 @@ class CliOptionParser {
   /// オプション・フラグ --recursive
   static const String recursive = 'recursive';
 
+  /// オプション・フラグ --describe
+  static const String describe = 'describe';
+
   /// オプション・フラグ --use-color
   static const String useColor = 'use-color';
 
@@ -51,6 +54,15 @@ PATTERNS can contain multiple patterns separated by newlines.
         negatable: false,
         abbr: 'r',
         help: 'Recursive file search flag for directories.',
+      )
+      // データソース元や行番号の説明出力のオプション・フラグ
+      // フラグ -d または --describe の指定を表します。
+      // フラグが有効な場合は、マッチ行出力にパス名と行番号が付加されます。
+      ..addFlag(
+        describe,
+        negatable: false,
+        abbr: 'd',
+        help: 'Adds a description of the data source and line number.',
       )
       // マッチテキスト行・マッチパターン色付出力のオプション・フラグ
       // フラグ --use-color か --no-use-color の指定を表します。
