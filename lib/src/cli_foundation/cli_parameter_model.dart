@@ -7,6 +7,7 @@ class CliParameter {
     required this.paths,
     this.isRecursive = false,
     this.isUseColor = false,
+    this.isDebug = false,
   });
 
   /// 検索パターン・リスト
@@ -36,4 +37,7 @@ class CliParameter {
   ///
   /// _通常の grep では、--color の WHEN に 'always', 'never', 'auto' が選べます。_
   final bool isUseColor;
+
+  /// デバッグ実行・フラグ
+  final bool isDebug;
 }

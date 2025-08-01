@@ -96,6 +96,7 @@ CliParameter _createCliParameter(
   String? regexp = argResults[CliOptionParser.regexp] as String?;
   bool isRecursive = argResults[CliOptionParser.recursive] as bool;
   bool isUseColor = argResults[CliOptionParser.useColor] as bool;
+  bool isDebug = argResults[CliOptionParser.debug] as bool;
 
   // 検索パターン・オプションの取得
   List<RegExp> regexps = [];
@@ -109,5 +110,6 @@ CliParameter _createCliParameter(
     paths: unionPaths,
     isRecursive: isRecursive,
     isUseColor: isUseColor,
+    isDebug: isDebug,
   );
 }

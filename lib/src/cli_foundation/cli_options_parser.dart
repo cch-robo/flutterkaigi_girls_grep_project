@@ -15,6 +15,9 @@ class CliOptionParser {
   /// オプション・フラグ --use-color
   static const String useColor = 'use-color';
 
+  /// オプション・フラグ --debug
+  static const String debug = 'debug';
+
   /// オプション・フラグ --help
   static const String help = 'help';
 
@@ -56,6 +59,13 @@ PATTERNS can contain multiple patterns separated by newlines.
         useColor,
         negatable: true,
         help: 'Output color options for matched text patterns.',
+      )
+      // デバッグ実行明示のオプション・フラグ
+      // フラグ --debug の指定を表します。
+      ..addFlag(
+        debug,
+        negatable: false,
+        help: 'Flag of running in the debug mode.',
       )
       // Usage ヘルプ表示のオプション・フラグ
       // フラグ -h または --help の指定を表します。
