@@ -1,4 +1,4 @@
-# **[言語大乱闘! スマッシュシスターズ!](https://flutterkaigi.connpass.com/event/362550/)**
+# **[言語大乱闘! スマッシュシスターズ!](https://flutterkaigi.connpass.com/event/362550/)** (2025/08/02)
 
 ## FlutterKaigi girls x RustLadies コラボセッション
 
@@ -8,8 +8,8 @@
 grepコマンドを実装したコードをながめながら、それぞれの言語の特徴をお話ししていきます。
 
 ### イベントページ
-- [【FlutterKaigi girls】言語大乱闘! スマッシュシスターズ!](https://flutterkaigi.connpass.com/event/362550/) (2025/08/02)  
+- [言語大乱闘! スマッシュシスターズ!](https://flutterkaigi.connpass.com/event/362550/) （FlutterKaigi girls)  
   [https://flutterkaigi.connpass.com/event/362550/](https://flutterkaigi.connpass.com/event/362550/)
 
-- [【RustLadies】言語大乱闘! スマッシュシスターズ!](https://rustladies.connpass.com/event/362634/) (2025/08/02)  
+- [言語大乱闘! スマッシュシスターズ!](https://rustladies.connpass.com/event/362634/) （RustLadies）  
   [https://rustladies.connpass.com/event/362634/](https://rustladies.connpass.com/event/362634/)
