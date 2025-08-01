@@ -22,7 +22,7 @@ Future<void> grep(
   for (UnionPath path in param.paths) {
     if (path.isFilePath) {
       // ファイル内を探索
-      submitPatternMatchedLines(
+      _submitPatternMatchedLines(
         completer,
         regexps,
         path.filePath!,
@@ -32,7 +32,7 @@ Future<void> grep(
       // ディレクトリ配下の全ファイル内を探索
       List<File> files = _getFiles(path.dirPath!);
       for (File file in files) {
-        submitPatternMatchedLines(
+        _submitPatternMatchedLines(
           completer,
           regexps,
           file,
@@ -65,7 +65,7 @@ List<File> _getFiles(Directory directory) {
 /// - [regexps] : 検索パターン一覧
 /// - [file] : パターンマッチ行を探索するファイル
 /// - [streamDataController] : マッチした行を受け取る SteamController
-void submitPatternMatchedLines(
+void _submitPatternMatchedLines(
   Completer<void> completer,
   List<RegExp> regexps,
   File file,
