@@ -24,6 +24,7 @@ Future<void> grep(
     _submitPatternMatchedLinesFromStdin(
       completer,
       regexps,
+      param.isDescribe,
       streamDataController,
     );
   }
@@ -34,6 +35,7 @@ Future<void> grep(
         completer,
         regexps,
         path.filePath!,
+        param.isDescribe,
         streamDataController,
       );
     } else {
@@ -44,6 +46,7 @@ Future<void> grep(
           completer,
           regexps,
           file,
+          param.isDescribe,
           streamDataController,
         );
       }
@@ -72,11 +75,13 @@ List<File> _getFiles(Directory directory) {
 /// - [completer] : 非同期処理完了通知用
 /// - [regexps] : 検索パターン一覧
 /// - [file] : パターンマッチ行を探索するファイル
+/// - [isDescribe] : 説明追加フラグ
 /// - [streamDataController] : マッチした行を受け取る SteamController
 void _submitPatternMatchedLines(
   Completer<void> completer,
   List<RegExp> regexps,
   File file,
+  bool isDescribe,
   StreamController<String> streamDataController,
 ) {
   if (file.existsSync()) {
@@ -93,7 +98,11 @@ void _submitPatternMatchedLines(
       (String line) {
         for (RegExp regexp in regexps) {
           if (regexp.hasMatch(line)) {
-            streamDataController.add('$path[$lineNumber]: $line');
+            if (isDescribe) {
+              streamDataController.add('$path[$lineNumber]: $line');
+            } else {
+              streamDataController.add(line);
+            }
             break;
           }
         }
@@ -117,10 +126,12 @@ void _submitPatternMatchedLines(
 ///
 /// - [completer] : 非同期処理完了通知用
 /// - [regexps] : 検索パターン一覧
+/// - [isDescribe] : 説明追加フラグ
 /// - [streamDataController] : マッチした行を受け取る SteamController
 void _submitPatternMatchedLinesFromStdin(
   Completer<void> completer,
   List<RegExp> regexps,
+  bool isDescribe,
   StreamController<String> streamDataController,
 ) {
   String path = 'stdin';
@@ -140,7 +151,11 @@ void _submitPatternMatchedLinesFromStdin(
           //
           // このため streamDataController.onListen コールバックで、
           // データ投入完了をチェックさせて completer.complete() を実行させます。
-          streamDataController.add('$path[$lineNumber]: $line');
+          if (isDescribe) {
+            streamDataController.add('$path[$lineNumber]: $line');
+          } else {
+            streamDataController.add(line);
+          }
           streamDataController.onListen = () {
             if (unCompleteTaskCounter == 0) {
               completer.complete();
