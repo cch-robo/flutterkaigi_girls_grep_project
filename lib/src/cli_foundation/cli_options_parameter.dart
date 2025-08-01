@@ -73,7 +73,33 @@ CliParameter _createCliParameter(List<File> filePaths, ArgResults argResults) {
       throw CanNotFindFilesError();
     }
   }
+
+  // TODO 現状の検索パラメータとファイルパス並びの取得は仮実装なので、修正すること。
+  // 残りの引数一覧を取得。
+  final List<String> params = argResults.rest;
+
+  if (params.isEmpty) {
+    // ファイルパス並びがなかった場合
+    throw FileNotExistException(filePath: '(none)');
+  }
+
+  // 検索パターン・オプションの取得
+  List<RegExp> regexps = [];
+  String? regexp = argResults[CliOptionParser.regexp] as String?;
+  String? pattern = (!_isFilePath(params.first) ? params.first : null);
+  if (regexp != null) {
+    regexps.add(RegExp(regexp));
+  }
+  if (pattern != null) {
+    regexps.add(RegExp(pattern));
+  }
+  if (regexps.isEmpty) {
+    // 検索パターンがなかった場合
+    throw CanNotFindFilesError();
+  }
+
   return CliParameter(
+    regexps: regexps,
     paths: filePaths,
     isRecursive: isRecursive,
     isUseColor: isUseColor,
