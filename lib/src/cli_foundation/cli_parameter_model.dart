@@ -3,10 +3,16 @@ import 'dart:io';
 /// grep CLI のコマンドライン・パラメータを表すモデル
 class CliParameter {
   const CliParameter({
+    required this.regexps,
     required this.paths,
     this.isRecursive = false,
     this.isUseColor = false,
   });
+
+  /// 検索パターン・リスト
+  ///
+  /// _パターンマッチに使う、正規表現パターン・リストを指定します。_
+  final List<RegExp> regexps;
 
   /// パターンマッチ検索対象・ファイルパス一覧
   ///
