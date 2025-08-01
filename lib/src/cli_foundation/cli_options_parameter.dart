@@ -2,100 +2,106 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
-import 'package:grep_library/src/cli_foundation/errors/can_not_find_files_error.dart';
+import 'package:grep_library/src/cli_foundation/errors/can_not_find_files_exception.dart';
 
 import 'cli_options_parser.dart';
-import 'errors/file_not_exist_exception.dart';
+import 'errors/invalid_path_exception.dart';
+import 'errors/pattern_not_exist_exception.dart';
 
 /// コマンドライン・オプションのパラメータモデルを生成
 ///
 /// _ファイルパス一覧が取得できなかったり空の場合は、
-/// [FileNotExistException] や [CanNotFindFilesError] が投げられます。_
+/// [PatternNotExistException] や [InvalidPathException] および
+/// [CanNotFindFilesException] が投げられます。_
 CliParameter createOptionsParameter(ArgResults argResults) {
-  // 残りのオプション指定は、全てファイルパス並びとします。
-  final List<String> paths = argResults.rest;
-  List<File> filePaths = _createFilePaths(paths);
-
-  // コマンドライン・オプションモデルを返す。
-  return _createCliParameter(filePaths, argResults);
-}
-
-/// ファイルパス一覧生成
-///
-/// _[filePath] で指定したファイルやディレクトリが存在しなかったり、
-/// ファイルパス一覧が空の場合は、[FileNotExistException] が投げられます。_
-List<File> _createFilePaths(List<String> paths) {
-  List<File> filePaths = paths
-      .map((String filePath) => _createFilePath(filePath))
-      .toList();
-  if (filePaths.isEmpty) {
-    throw FileNotExistException(filePath: '(none)');
+  // 残りのオプション指定に、パターンが含まれているかチェックする。
+  if (argResults.rest.isEmpty || _isExistPath(argResults.rest.first)) {
+    // パターンが存在しなかった場合
+    throw PatternNotExistException();
   }
-  return filePaths;
-}
 
-/// ファイルパス・チェック
-///
-/// _[filePath] で指定したファイルやディレクトリが存在しない場合は、
-/// [FileNotExistException] が投げられます。_
-bool _isFilePath(String filePath) {
-  final File file = File(filePath);
-  return file.existsSync();
-}
+  // 検索パターン(PATTERNS)を取得
+  final String pattern = argResults.rest.first;
 
-/// ファイルパス生成
-///
-/// _[filePath] で指定したファイルやディレクトリが存在しない場合は、
-/// [FileNotExistException] が投げられます。_
-File _createFilePath(String filePath) {
-  final File file = File(filePath);
-  if (!file.existsSync()) {
-    throw FileNotExistException(filePath: filePath);
+  // ファイルパス一覧を取得
+  final List<String> arguments = argResults.rest.sublist(1);
+  final int errIndex = _searchInvalidPath(arguments);
+  if (errIndex != -1) {
+    // ファイルやディレクトリのパスでない argument が存在した場合
+    throw InvalidPathException(path: arguments[errIndex]);
   }
-  return file;
-}
 
-/// コマンドライン・パラメータモデル生成
-///
-/// _[filePath] からファイルが取得できない場合は、[CanNotFindFilesError] が投げられます。_
-CliParameter _createCliParameter(List<File> filePaths, ArgResults argResults) {
+  // ファイル＋ディレクトリパス一覧作成
+  List<File> filePaths = _createFilePaths(arguments);
+
+  // ディレクトリ再帰的探索のチェック
   bool isRecursive = argResults[CliOptionParser.recursive] as bool;
-  bool isUseColor = argResults[CliOptionParser.useColor] as bool;
-  if (!isRecursive) {
+  if (filePaths.isNotEmpty && !isRecursive) {
     List<File> directories = filePaths
         .where(
           (File filePath) =>
               filePath.statSync().type == FileSystemEntityType.directory,
         )
         .toList();
-    // -R オプション指定がないのに、Directory しか指定されていないので検索ファイルを特定できない。
-    if (filePaths.length == directories.length) {
-      throw CanNotFindFilesError();
+    // -r オプション指定がないのに、Directory があるので検索ファイルを特定できない。
+    if (directories.isNotEmpty) {
+      throw CanNotFindFilesException();
     }
   }
 
-  // TODO 現状の検索パラメータとファイルパス並びの取得は仮実装なので、修正すること。
-  // 残りの引数一覧を取得。
-  final List<String> params = argResults.rest;
+  // コマンドライン・オプションモデルを返す。
+  return _createCliParameter(pattern, filePaths, argResults);
+}
 
-  if (params.isEmpty) {
-    // ファイルパス並びがなかった場合
-    throw FileNotExistException(filePath: '(none)');
-  }
+/// パス([path])にファイルかディレクトリが存在するかチェックする。
+bool _isExistPath(String path) {
+  final File file = File(path);
+  final Directory dir = Directory(path);
+  return file.existsSync() || dir.existsSync();
+}
+
+/// パスでない argument が含まれているかチェックする。
+///
+/// - 返却値<br/>
+///   ファイルやディレクトリがなかった argument の index 値が返ります。<br/>
+///   全てがファイルパスの場合は、-1が返ります。
+int _searchInvalidPath(List<String> arguments) {
+  List<int> indexList = List.generate(arguments.length, (int index) => index);
+  return indexList.firstWhere(
+    (int index) => !_isExistPath(arguments[index]),
+    orElse: () => -1,
+  );
+}
+
+/// ファイルパス生成
+File _createFilePath(String filePath) {
+  final File file = File(filePath);
+  return file;
+}
+
+/// ファイルパス一覧生成
+List<File> _createFilePaths(List<String> arguments) {
+  List<File> filePaths = arguments
+      .map((String filePath) => _createFilePath(filePath))
+      .toList();
+  return filePaths;
+}
+
+/// コマンドライン・パラメータモデル生成
+CliParameter _createCliParameter(
+  String pattern,
+  List<File> filePaths,
+  ArgResults argResults,
+) {
+  String? regexp = argResults[CliOptionParser.regexp] as String?;
+  bool isRecursive = argResults[CliOptionParser.recursive] as bool;
+  bool isUseColor = argResults[CliOptionParser.useColor] as bool;
 
   // 検索パターン・オプションの取得
   List<RegExp> regexps = [];
-  String? regexp = argResults[CliOptionParser.regexp] as String?;
-  String? pattern = (!_isFilePath(params.first) ? params.first : null);
+  regexps.add(RegExp(pattern));
   if (regexp != null) {
     regexps.add(RegExp(regexp));
-  }
-  if (pattern != null) {
-    regexps.add(RegExp(pattern));
-  }
-  if (regexps.isEmpty) {
-    // 検索パターンがなかった場合
-    throw CanNotFindFilesError();
   }
 
   return CliParameter(
