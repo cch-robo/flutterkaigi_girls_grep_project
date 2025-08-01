@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:grep_library/src/api_foundation/parameter_model.dart';
+import 'package:grep_library/src/api_foundation/union_path_model.dart';
 
 /// 検索パターンが含まれている行をストリームに投入します。
 ///
@@ -18,40 +19,41 @@ Future<void> grep(
 
   bool isUseColor = param.isUseColor;
   List<RegExp> regexps = param.regexps;
-  File file = param.paths
-      .firstWhere((unionPath) => unionPath.isFilePath)
-      .filePath!;
+  for (UnionPath path in param.paths) {
+    if (!path.isFilePath) continue;
 
-  if (file.existsSync()) {
-    final Stream<List<int>> byteStream = file.openRead();
+    File file = path.filePath!;
+    if (file.existsSync()) {
+      final Stream<List<int>> byteStream = file.openRead();
 
-    String path = file.path;
-    int lineNumber = 1;
+      String path = file.path;
+      int lineNumber = 1;
 
-    final Stream<String> lineStream = byteStream
-        .transform(utf8.decoder)
-        .transform(LineSplitter());
+      final Stream<String> lineStream = byteStream
+          .transform(utf8.decoder)
+          .transform(LineSplitter());
 
-    lineStream.listen(
-      (String line) {
-        for (RegExp regexp in regexps) {
-          if (regexp.hasMatch(line)) {
-            streamDataController.add('$path[$lineNumber]: $line');
-            break;
+      lineStream.listen(
+        (String line) {
+          for (RegExp regexp in regexps) {
+            if (regexp.hasMatch(line)) {
+              streamDataController.add('$path[$lineNumber]: $line');
+              break;
+            }
           }
-        }
-        lineNumber++;
-      },
-      onDone: () {
-        completer.complete();
-      },
-      onError: (Object? error) {
-        completer.completeError(
-          error!,
-          (error is Error) ? error.stackTrace : StackTrace.current,
-        );
-      },
-    );
+          lineNumber++;
+        },
+        onDone: () {
+          completer.complete();
+        },
+        onError: (Object? error) {
+          completer.completeError(
+            error!,
+            (error is Error) ? error.stackTrace : StackTrace.current,
+          );
+        },
+      );
+    }
   }
   return completer.future;
 }
