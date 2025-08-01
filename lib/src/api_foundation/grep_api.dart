@@ -19,6 +19,14 @@ Future<void> grep(
 
   bool isUseColor = param.isUseColor;
   List<RegExp> regexps = param.regexps;
+  if (param.paths.isEmpty) {
+    // 入力ファイルがないときは、標準入力を探索する。
+    _submitPatternMatchedLinesFromStdin(
+      completer,
+      regexps,
+      streamDataController,
+    );
+  }
   for (UnionPath path in param.paths) {
     if (path.isFilePath) {
       // ファイル内を探索
@@ -100,6 +108,59 @@ void _submitPatternMatchedLines(
           (error is Error) ? error.stackTrace : StackTrace.current,
         );
       },
+      cancelOnError: true, // エラー発生時に自動的に購読をキャンセルする
     );
   }
+}
+
+/// 標準入力から検索パターンが含まれている行をストリームに投入します。
+///
+/// - [completer] : 非同期処理完了通知用
+/// - [regexps] : 検索パターン一覧
+/// - [streamDataController] : マッチした行を受け取る SteamController
+void _submitPatternMatchedLinesFromStdin(
+  Completer<void> completer,
+  List<RegExp> regexps,
+  StreamController<String> streamDataController,
+) {
+  String path = 'stdin';
+  int lineNumber = 1;
+  int unCompleteTaskCounter = 0;
+
+  final Stream<String> lineStream = stdin
+      .transform(utf8.decoder)
+      .transform(LineSplitter());
+
+  lineStream.listen(
+    (String line) {
+      for (RegExp regexp in regexps) {
+        if (regexp.hasMatch(line)) {
+          // streamDataController.add() の処理は、onDoneコールから実行されるため、
+          // onDoneで completer.complete すると全データ投入ができない。
+          //
+          // このため streamDataController.onListen コールバックで、
+          // データ投入完了をチェックさせて completer.complete() を実行させます。
+          streamDataController.add('$path[$lineNumber]: $line');
+          streamDataController.onListen = () {
+            if (unCompleteTaskCounter == 0) {
+              completer.complete();
+            }
+          };
+          break;
+        }
+      }
+      lineNumber++;
+    },
+    onDone: () {
+      // ここでは、呼出元の非同期処理を完了させない。
+      // completer.complete();
+    },
+    onError: (Object? error) {
+      completer.completeError(
+        error!,
+        (error is Error) ? error.stackTrace : StackTrace.current,
+      );
+    },
+    cancelOnError: true, // エラー発生時に自動的に購読をキャンセルする
+  );
 }
