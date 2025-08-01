@@ -8,8 +8,8 @@ import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 
 void launchCliApp(List<String> arguments) {
   CliOptionParser parser = CliOptionParser(arguments: arguments);
-  if (parser.hasOptionsUsage) {
-    // ヘルプ表示が要求されている場合は、優先的に表示して処理を終了する。
+  if (arguments.isEmpty || parser.hasOptionsUsage) {
+    // ヘルプ表示が必要な場合は、優先的に表示して処理を終了する。
     CliMessage help = CliMessage(isUseColor: true);
     help.putMessage(parser.optionsUsage);
     exit(1);
