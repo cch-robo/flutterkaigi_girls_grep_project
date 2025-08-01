@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:grep_library/src/api_foundation/union_path_model.dart';
 import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 import 'package:grep_library/src/cli_foundation/errors/can_not_find_files_exception.dart';
 
@@ -31,17 +32,14 @@ CliParameter createOptionsParameter(ArgResults argResults) {
     throw InvalidPathException(path: arguments[errIndex]);
   }
 
-  // ファイル＋ディレクトリパス一覧作成
-  List<File> filePaths = _createFilePaths(arguments);
+  // ファイル＋ディレクトリのユニオンパス一覧作成
+  List<UnionPath> unionPaths = _createUnionPaths(arguments);
 
   // ディレクトリ再帰的探索のチェック
   bool isRecursive = argResults[CliOptionParser.recursive] as bool;
-  if (filePaths.isNotEmpty && !isRecursive) {
-    List<File> directories = filePaths
-        .where(
-          (File filePath) =>
-              filePath.statSync().type == FileSystemEntityType.directory,
-        )
+  if (unionPaths.isNotEmpty && !isRecursive) {
+    List<UnionPath> directories = unionPaths
+        .where((UnionPath path) => path.isDirPath)
         .toList();
     // -r オプション指定がないのに、Directory があるので検索ファイルを特定できない。
     if (directories.isNotEmpty) {
@@ -50,7 +48,7 @@ CliParameter createOptionsParameter(ArgResults argResults) {
   }
 
   // コマンドライン・オプションモデルを返す。
-  return _createCliParameter(pattern, filePaths, argResults);
+  return _createCliParameter(pattern, unionPaths, argResults);
 }
 
 /// パス([path])にファイルかディレクトリが存在するかチェックする。
@@ -73,24 +71,26 @@ int _searchInvalidPath(List<String> arguments) {
   );
 }
 
-/// ファイルパス生成
-File _createFilePath(String filePath) {
-  final File file = File(filePath);
-  return file;
-}
-
-/// ファイルパス一覧生成
-List<File> _createFilePaths(List<String> arguments) {
-  List<File> filePaths = arguments
-      .map((String filePath) => _createFilePath(filePath))
-      .toList();
-  return filePaths;
+/// ファイル/ディレクトリ・ユニオンパス一覧生成
+List<UnionPath> _createUnionPaths(List<String> arguments) {
+  return arguments.map((String path) {
+    FileSystemEntityType fileType = File(path).statSync().type;
+    if (fileType == FileSystemEntityType.file) {
+      return UnionPath.createFilePath(path);
+    }
+    if (fileType == FileSystemEntityType.directory) {
+      return UnionPath.createDirPath(path);
+    }
+    throw UnsupportedError(
+      'Unsupported fileType:${fileType.toString()}, path:$path.',
+    );
+  }).toList();
 }
 
 /// コマンドライン・パラメータモデル生成
 CliParameter _createCliParameter(
   String pattern,
-  List<File> filePaths,
+  List<UnionPath> unionPaths,
   ArgResults argResults,
 ) {
   String? regexp = argResults[CliOptionParser.regexp] as String?;
@@ -106,7 +106,7 @@ CliParameter _createCliParameter(
 
   return CliParameter(
     regexps: regexps,
-    paths: filePaths,
+    paths: unionPaths,
     isRecursive: isRecursive,
     isUseColor: isUseColor,
   );
