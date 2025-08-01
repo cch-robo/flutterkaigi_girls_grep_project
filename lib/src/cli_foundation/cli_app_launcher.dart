@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:grep_library/src/api_foundation/abstract_exception.dart';
+import 'package:grep_library/src/api_foundation/parameter_model.dart';
 import 'package:grep_library/src/cli_foundation/cli_message.dart';
 import 'package:grep_library/src/cli_foundation/cli_options_parameter.dart';
 import 'package:grep_library/src/cli_foundation/cli_options_parser.dart';
-import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 
 import '../../grep_api.dart';
 

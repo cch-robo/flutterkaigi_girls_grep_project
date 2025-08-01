@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
+import 'package:grep_library/src/api_foundation/parameter_model.dart';
 
 /// 検索パターンが含まれている行をストリームに投入します。
 ///

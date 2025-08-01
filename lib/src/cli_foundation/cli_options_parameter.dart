@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:args/args.dart';
+import 'package:grep_library/src/api_foundation/parameter_model.dart';
 import 'package:grep_library/src/api_foundation/union_path_model.dart';
-import 'package:grep_library/src/cli_foundation/cli_parameter_model.dart';
 import 'package:grep_library/src/cli_foundation/errors/can_not_find_files_exception.dart';
 
 import 'cli_options_parser.dart';
