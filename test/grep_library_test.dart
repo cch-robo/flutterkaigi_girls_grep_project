@@ -43,7 +43,7 @@ void main() {
       arguments: <String>['hello world!', 'good morning!'],
     );
     expect(
-          () => createOptionsParameter(parser.argResults),
+      () => createOptionsParameter(parser.argResults),
       throwsA(isA<InvalidPathException>()),
     );
   });
