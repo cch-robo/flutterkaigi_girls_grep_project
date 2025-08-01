@@ -1,6 +1,6 @@
 import 'package:grep_library/src/api_foundation/union_path_model.dart';
 
-/// grep CLI のコマンドライン・パラメータを表すモデル
+/// grep パラメータを表すモデル
 class CliParameter {
   const CliParameter({
     required this.regexps,
