@@ -65,7 +65,7 @@ PATTERNS can contain multiple patterns separated by newlines.
       ..addFlag(
         debug,
         negatable: false,
-        help: 'Flag of running in the debug mode.',
+        help: 'Flag to run in the debug mode.',
       )
       // Usage ヘルプ表示のオプション・フラグ
       // フラグ -h または --help の指定を表します。
