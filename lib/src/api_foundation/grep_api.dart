@@ -17,7 +17,7 @@ Future<void> grep(
   final Completer<void> completer = Completer<void>();
 
   bool isUseColor = param.isUseColor;
-  RegExp regExp = param.regexps.first;
+  List<RegExp> regexps = param.regexps;
   File file = param.paths
       .firstWhere((unionPath) => unionPath.isFilePath)
       .filePath!;
@@ -34,8 +34,11 @@ Future<void> grep(
 
     lineStream.listen(
       (String line) {
-        if (regExp.hasMatch(line)) {
-          streamDataController.add('$path[$lineNumber]: $line');
+        for (RegExp regexp in regexps) {
+          if (regexp.hasMatch(line)) {
+            streamDataController.add('$path[$lineNumber]: $line');
+            break;
+          }
         }
         lineNumber++;
       },
