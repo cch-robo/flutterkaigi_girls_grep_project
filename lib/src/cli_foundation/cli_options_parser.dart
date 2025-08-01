@@ -6,61 +6,81 @@ import 'package:grep_library/src/cli_foundation/errors/can_not_find_files_error.
 
 import 'errors/file_not_exist_exception.dart';
 
-/// コマンドライン・オプション --help
-///
-/// コマンドライン・ヘルプ表示
-///
-/// オプション `-h` または `--help` の指定を表します。
+/// オプション --regexp
+const String regexp = 'regexp';
+
+/// オプション・フラグ --recursive
+const String recursive = 'recursive';
+
+/// オプション・フラグ --use-color
+const String useColor = 'use-color';
+
+/// オプション・フラグ --help
 const String help = 'help';
 
-/// コマンドライン・オプション --directory-recursive
-///
-/// ファイルパス・ディレクトリ再帰的探索オプション
-///
-/// オプション `-R` または `--directory-recursive` の指定を表します。
-///
-/// _通常の grep では、`-r`, `--recursive`, `-R`, `--directory-recursive` を選びます。_
-const String recursive = 'directory-recursive';
-
-/// コマンドライン・オプション --use-color
-///
-/// マッチテキスト行・マッチパターン色付出力オプション
-///
-/// オプション --use-color か --no-use-color の指定を表します。
-///
-/// _通常の grep では、--color の WHEN に 'always', 'never', 'auto' が選べます。_
-const String useColor = 'use-color';
+/// コマンドライン Usage のヘッダテキスト
+const String usage = '''Usage: grep [OPTION]... PATTERNS [FILE]...
+Search for PATTERN in each FILE.
+Example: grep 'hello world' menu.h main.c
+When FILE is not specified, the stdin stream is searched.
+PATTERNS can contain multiple patterns separated by newlines.
+''';
 
 /// コマンドライン・オプションのパーサー取得
 ArgParser getOptionsParser() {
   final ArgParser argParser = ArgParser()
-    // コマンドライン・ヘルプ表示の省略表記は、-h とします。
+    // grep で検索する正規表現パターン(PATTERNS)を追加するオプション
+    // オプション -e PATTERNS または --regexp PATTERNS の指定を表します。
+    // （注）通常の grep では、-e, --regexp, -E, --extended-regexp が使えます。
+    ..addOption(
+      regexp,
+      abbr: 'e',
+      help: 'Specifies the regular expression pattern to search.',
+    )
+    // ファイルパス・ディレクトリ再帰的探索のオプション・フラグ
+    // フラグ -r または --recursive の指定を表します。
+    // （注）通常の grep では、-r, --recursive, -R, --directory-recursive が使えます。
+    ..addFlag(
+      recursive,
+      negatable: false,
+      abbr: 'r',
+      help: 'Recursive file search flag for directories.',
+    )
+    // マッチテキスト行・マッチパターン色付出力のオプション・フラグ
+    // フラグ --use-color か --no-use-color の指定を表します。
+    // （注）通常の grep では、--color であり、WHEN に 'always', 'never', 'auto' が選べます。
+    ..addFlag(
+      useColor,
+      negatable: true,
+      help: 'Output color options for matched text patterns.',
+    )
+    // Usage ヘルプ表示のオプション・フラグ
+    // フラグ -h または --help の指定を表します。
     ..addFlag(
       help,
       abbr: 'h',
       negatable: false,
       help: 'Print this usage information.',
-    )
-    // ファイルパス・ディレクトリ再帰的探索オプションの省略表記は、-R とします。
-    ..addFlag(
-      recursive,
-      negatable: false,
-      abbr: 'R',
-      help: 'Recursive file search flag for directories.',
-    )
-    // マッチテキスト行・マッチパターン色付出力オプション
-    ..addFlag(
-      useColor,
-      negatable: true,
-      help: 'Output color options for matched text patterns.',
     );
 
   return argParser;
 }
 
-/// コマンドライン・オプション一覧取得
-String getOptionsUsage() {
-  return getOptionsParser().usage;
+/// コマンドライン・オプションのパーサー解析結果取得
+ArgResults getOptionsParserResults(List<String> args, ArgParser argParser) {
+  ArgResults argResults = argParser.parse(args);
+  return argResults;
+}
+
+/// オプション・Usage ヘルプの存在チェック
+bool hasOptionsUsage(ArgResults argResults) {
+  bool hasHelp = argResults[help] as bool;
+  return hasHelp;
+}
+
+/// オプション・Usage ヘルプのヘッダ＋オプション一覧取得
+String getOptionsUsage(ArgParser argParser) {
+  return '$usage\n${argParser.usage}';
 }
 
 /// コマンドライン・オプションのパラメータモデルを生成
