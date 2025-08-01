@@ -7,7 +7,7 @@
 ## 概要
 grepコマンドを実装したコードをながめながら、それぞれの言語の特徴をお話ししていきます。
 
-### イベントーページ
+### イベントページ
 - [【FlutterKaigi girls】言語大乱闘! スマッシュシスターズ!](https://flutterkaigi.connpass.com/event/362550/) (2025/08/02)  
   [https://flutterkaigi.connpass.com/event/362550/](https://flutterkaigi.connpass.com/event/362550/)
 
