@@ -28,6 +28,10 @@ void launchCliApp(List<String> arguments) {
     // TODO パラメータを使った処理を追加する。（現状は、コマンドライン・パラメータ取得確認のみ）
     CliMessage mes = CliMessage(isUseColor: true);
     mes.putMessage('ファイルパス=${param.paths.first.path}', color: TextColor.red);
+    mes.putMessage(
+      'regexps=${param.regexps.map((RegExp regexp) => regexp.pattern)}',
+      color: TextColor.green,
+    );
     mes.putMessage('isUseColor=${param.isUseColor}', color: TextColor.blue);
     mes.putMessage('isRecursive=${param.isRecursive}', color: TextColor.yellow);
     print(mes.getMessage() ?? '');
