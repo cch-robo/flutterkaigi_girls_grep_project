@@ -133,6 +133,22 @@ General help using GNU software: <https://www.gnu.org/gethelp/>
 この要望から、  
 `--regexp`,`--recursive`,`--describe`,`--use-color` オプションを盛り込むことにしました。
 
+- **dgrepのヘルプ出力例**
+```bash
+Usage: grep [OPTION]... PATTERNS [FILE]...
+Search for PATTERN in each FILE.
+Example: grep 'hello world' menu.h main.c
+When FILE is not specified, the stdin stream is searched.
+PATTERNS can contain multiple patterns separated by newlines.
+
+-e, --regexp            Specifies the regular expression pattern to search.
+-r, --recursive         Recursive file search flag for directories.
+-d, --describe          Adds a description of the data source and line number.
+    --[no-]use-color    Output color options for matched text patterns.
+    --debug             Flag to run in the debug mode.
+-h, --help              Print this usage information.
+```
+
 
 ## 標準入力・標準出力・標準エラー出力を使う
 dart言語は、コマンドライン・アプリの開発にも対応していますから、  
