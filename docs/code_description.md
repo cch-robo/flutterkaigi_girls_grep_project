@@ -221,7 +221,27 @@ grep中核機能を `lib/src/api_foundation`ディレクトリに配置して、
     [https://api.dart.dev/dart-async/StreamController-class.html](https://api.dart.dev/dart-async/StreamController-class.html)
 
 
+## バイナリ実行ファイルを作る
+dart言語で作成したコマンドラインアプリから、ネイティブのバイナリ実行ファイルも作れます。  
+プロジェクトの`bin/dgrep_mac`の intel mac バイナリ実行ファイルは、dart compile コマンドで作りました。
 
+各環境ネイティブのコマンドラインアプリのバイナリ実行ファイルを作るには、  
+各プラットフォーム用の Dart/Flutter開発環境で、`dart compile exe`コマンドを実行するだけです。
+
+- [dart compile | Dart](https://dart.dev/tools/dart-compile)  
+  [https://dart.dev/tools/dart-compile](https://dart.dev/tools/dart-compile)
+
+  - [Self-contained executables (exe)](https://dart.dev/tools/dart-compile#exe)  
+    `dart compile exe`コマンドの説明項目です。
+
+
+### バイナリ実行ファイル作成具体例
+intel mac バイナリ実行ファイル `bin/dgrep_mac`の作成には、
+1. intel mac 用の Dart/Flutter開発環境を構築してコマンドラインアプリを作り、  
+2. `dart run bin/grep_cli.dart`でコマンドラインアプリが機能することを確認したら、
+3. `dart compile exe bin/grep_cli.dart -o bin/dgrep_mac` を実行してください。
+4. Ubuntu/Linux 上でDart/Flutter開発環境を構築されていれば、このプロジェクトをクローンして  
+   `dart compile exe bin/grep_cli.dart -o bin/dgrep_ubuntu` を実行してみて下さい。
 
 
 
