@@ -188,8 +188,39 @@ dart言語では、`lib/`ディレクトリ直下に配置したコードファ�
 そこでコマンドラインアプリとして必要な API を公開する `lib/grep_cli.dart`ファイルと、  
 grep中核機能に必要な API を公開する `lib/grep_api.dart`ファイルに公開パッケージを分けています。
 
+- **備考**  
+  `grep_cli.dart`と`grep_api.dart`のファイルの中身は、  
+  いずれともに公開する`lib/src/`配下のファイルを`export`指定しているだけです。 
+
 
 ### コマンドラインアプリ API と 中核機能用 API の分離
+プロジェクトでは、コマンドラインアプリ関連の機能を `lib/src/cli_foundation`ディレクトリに配置し、  
+grep中核機能を `lib/src/api_foundation`ディレクトリに配置して、ドメイン機能を分離しています。
+
+
+### 分離した API どうしの接合のため Stream を使っています。
+コマンドラインアプリと中核機能を分離するにあたり、ユーザ入出力を抽象化 ⇒ 分離する必要があります。
+
+コマンドラインアプリなら標準入出力を使ってユーザとの入出力を行いますが、  
+デスクトップやモバイルアプリでは、専用のダイアログやユーザーインターフェースを用いるでしょう。
+
+このため中核機能APIで、検索パターンに合致した行を出力する際に、標準出力への書き込みを直書きすると  
+デスクトップやモバイルアプリからの利用に制限が出てしまうので、何らかの方法で分離する必要があります。  
+さらにコマンドラインアプリでも、モバイルアプリであっても透過的に扱える ⇒ 接合できる必要もあります。
+
+このためプロジェクトでは、Stream ⇒ StreamController を使って、入出力を中核機能APIから分離しています。
+
+
+- [Asynchronous programming: Streams | Dart](https://dart.dev/libraries/async/using-streams)  
+  [https://dart.dev/libraries/async/using-streams](https://dart.dev/libraries/async/using-streams)
+
+  - [Stream class - dart:async library - Dart API](https://api.dart.dev/dart-async/Stream-class.html)  
+    [https://api.dart.dev/dart-async/Stream-class.html](https://api.dart.dev/dart-async/Stream-class.html)
+
+  - [StreamController class - dart:async library - Dart API](https://api.dart.dev/dart-async/StreamController-class.html)  
+    [https://api.dart.dev/dart-async/StreamController-class.html](https://api.dart.dev/dart-async/StreamController-class.html)
+
+
 
 
 
