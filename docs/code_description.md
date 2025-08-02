@@ -110,3 +110,66 @@ Report bugs to: bug-grep@gnu.org
 GNU grep のホームページ: <https://www.gnu.org/software/grep/>
 General help using GNU software: <https://www.gnu.org/gethelp/>
 ```
+
+気を取り直して、  
+標準 grep の雰囲気を楽しむため最低限これは欲しいよねと欲張ってみました。
+
+1. オプションフラグ無しで、検索パターンと複数ファイルパスの探索ができるようにする。  
+   `$ grep ”hello world!” sampl1.txt sammple2.txt`をやりたい。
+2. ファイルパスにディレクトリが指定されれば、ディレクトリ内の全ファイルの探索ができるようにする。  
+   `$ grep -R ”hello world!” sample/`をやりたい。
+3. ファイルパス指定がなければ、標準入力(STDIN)をデータソースにする。  
+   `$ cat sample.txt | grep ”hello world!”`をやりたい。
+4. パターンマッチ行だけでは寂しいから、ファイル名や行番号の説明追加もしたい。  
+   `main.c[15]:    print("hello world!");`のように出力させたい。
+5. パターンマッチ部を色付きにしたら視認性がよくなるよね。  
+   `$ grep -colour=auto ”hello world!” sampl1.txt sammple2.txt`をやりたい。
+
+この要望から、  
+`--regexp`,`--recursive`,`--describe`,`--use-color` オプションを盛り込むことにしました。
+
+
+## 標準入力・標準出力・標準エラー出力を使う
+dart言語は、コマンドライン・アプリの開発にも対応していますから、  
+コマンドライン・アプリでの入出力は、標準入出力(`stdin`,`stdout`,`stderr`)を使います。
+
+- [dart:io library - Dart API](https://api.dart.dev/dart-io/)
+  [https://api.dart.dev/dart-io/](https://api.dart.dev/dart-io/)  
+
+  - [stdin property - dart:io library - Dart API](https://api.dart.dev/dart-io/stdin.html)  
+    [https://api.dart.dev/dart-io/stdin.html](https://api.dart.dev/dart-io/stdin.html)
+
+  - [stdout property - dart:io library - Dart API](https://api.dart.dev/dart-io/stdout.html)  
+    [https://api.dart.dev/dart-io/stdout.html](https://api.dart.dev/dart-io/stdout.html)  
+
+  - [stderr property - dart:io library - Dart API](https://api.dart.dev/dart-io/stderr.html)  
+    [https://api.dart.dev/dart-io/stderr.html](https://api.dart.dev/dart-io/stderr.html)
+
+  - [Stdin class - dart:io library - Dart API](https://api.dart.dev/dart-io/Stdin-class.html)  
+    [https://api.dart.dev/dart-io/Stdin-class.html](https://api.dart.dev/dart-io/Stdin-class.html)
+
+  - [Stdout class - dart:io library - Dart API](https://api.dart.dev/dart-io/Stdout-class.html)  
+    [https://api.dart.dev/dart-io/Stdout-class.html](https://api.dart.dev/dart-io/Stdout-class.html)
+
+
+### 出力テキストへの色付けについて
+ANSIエスケープシーケンスを使って、標準出力への出力に色付けを行います。
+
+- [ASCII - Wikipedia](https://ja.wikipedia.org/wiki/ASCII)  
+  [https://ja.wikipedia.org/wiki/ASCII](https://ja.wikipedia.org/wiki/ASCII)
+
+- [ANSI escape code - Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code)
+  [https://en.wikipedia.org/wiki/ANSI_escape_code](https://en.wikipedia.org/wiki/ANSI_escape_code)
+
+```dart
+import 'dart:io';
+
+void main() {
+  stdout.write('\x1B[31mThis text is red.\x1B[0m\n'); // Red
+  stdout.write('\x1B[32mThis text is green.\x1B[0m\n'); // Green
+  stdout.write('\x1B[34mThis text is blue.\x1B[0m\n'); // Blue
+｝
+```
+
+
+
