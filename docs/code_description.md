@@ -25,6 +25,11 @@ dart 単独で Linux, macOS, Windows のコマンドラインアプリも作れ�
   - [ArgResults class - args library - Dart API](https://pub.dev/documentation/args/latest/args/ArgResults-class.html)  
     [https://pub.dev/documentation/args/latest/args/ArgResults-class.html](https://pub.dev/documentation/args/latest/args/ArgResults-class.html)
 
+- [dart create | Dart](https://dart.dev/tools/dart-create)  
+  [https://dart.dev/tools/dart-create](https://dart.dev/tools/dart-create)  
+  `$ dart create -t cli my_cli_app` で ArgParserテンプレート付きのプロジェクトも作れます。
+
+
 ### （脱線）
 ArgParser オブジェクトを使えば、オプションフラグの追加も簡単だから、  
 標準 grep オプションに合わせちゃおう ...そう思っていたことが私にもありました。
@@ -170,6 +175,22 @@ void main() {
   stdout.write('\x1B[34mThis text is blue.\x1B[0m\n'); // Blue
 ｝
 ```
+
+## dart言語ならではのパッケージ公開工夫
+前述の通り dart言語は、コマンドラインアプリだけでなくデスクトップやモバイルアプリも作れます。  
+
+grepコマンドラインアプリの **検索パターンを使ってディレクトリ内の全ファイルを探索する中核機能** は、  
+コマンドラインアプリにだけにかかわらず、デスクトップやモバイルアプリでも利用できそうです。
+
+dart言語では、`lib/`ディレクトリ直下に配置したコードファイル ⇒ ライブラリ ⇒ パッケージが、  
+外部からアクセス可能な公開パッケージ（公開ファイル）となります。
+
+そこでコマンドラインアプリとして必要な API を公開する `lib/grep_cli.dart`ファイルと、  
+grep中核機能に必要な API を公開する `lib/grep_api.dart`ファイルに公開パッケージを分けています。
+
+
+### コマンドラインアプリ API と 中核機能用 API の分離
+
 
 
 
