@@ -31,6 +31,7 @@ Future<void> launchCliApp(List<String> arguments) async {
 
     // grep 検索を行わせて、StreamController にヒット行を投入させます。
     await grep(param, streamDataController);
+    streamDataController.close();
 
     exit(0);
   } on AbstractException catch (exception) {
