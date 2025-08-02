@@ -134,7 +134,7 @@ General help using GNU software: <https://www.gnu.org/gethelp/>
 `--regexp`,`--recursive`,`--describe`,`--use-color` オプションを盛り込むことにしました。
 
 - **dgrepのヘルプ出力例**
-```bash
+```
 Usage: grep [OPTION]... PATTERNS [FILE]...
 Search for PATTERN in each FILE.
 Example: grep 'hello world' menu.h main.c
