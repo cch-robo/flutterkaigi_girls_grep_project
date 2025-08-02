@@ -38,7 +38,7 @@ Ubuntu 24.04 LTS のターミナルで `$ grep --help`を実行した瞬間、�
 
 **Ubuntu 24.04 LTS の grep --help 出力**
 
-```bash
+```
 $ grep --help
 Usage: grep [OPTION]... PATTERNS [FILE]...
 Search for PATTERNS in each FILE.
