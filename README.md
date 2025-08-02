@@ -30,3 +30,8 @@ grepコマンドを実装したコードをながめながら、それぞれの�
    export PATH=<プロジェクトディレクトリ>/bin:$PATH
 4. 上記の設定が完了すれば、dgrep コマンドが実行できます。  
    オプションを何も指定しないで起動すると、Usage ヘルプが表示されます。
+
+### コードの説明について
+こちらの [コードの説明](https://github.com/cch-robo/flutterkaigi_girls_grep_project/blob/main/docs/code_description.md) ページを御参照下さい。
+
+- [`docs/code_description.md`](https://github.com/cch-robo/flutterkaigi_girls_grep_project/blob/main/docs/code_description.md)
