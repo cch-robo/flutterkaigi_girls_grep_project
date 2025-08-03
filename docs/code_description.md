@@ -179,7 +179,7 @@ ANSIエスケープシーケンスを使って、標準出力への出力に色�
 - [ASCII - Wikipedia](https://ja.wikipedia.org/wiki/ASCII)  
   [https://ja.wikipedia.org/wiki/ASCII](https://ja.wikipedia.org/wiki/ASCII)
 
-- [ANSI escape code - Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code)
+- [ANSI escape code - Wikipedia](https://en.wikipedia.org/wiki/ANSI_escape_code)  
   [https://en.wikipedia.org/wiki/ANSI_escape_code](https://en.wikipedia.org/wiki/ANSI_escape_code)
 
 ```dart
